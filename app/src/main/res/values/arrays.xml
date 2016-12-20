@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="charts_names">
+        <item>Исходный сигнал</item>
+        <item>Сигнал без латентных периодов</item>
+        <item>Нормализированный сигнал</item>
+        <item>Спектр сигнала</item>
+        <item>Полосы</item>
+    </string-array>
+</resources>

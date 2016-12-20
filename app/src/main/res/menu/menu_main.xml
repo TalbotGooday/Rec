@@ -1,0 +1,34 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.talbotgooday.rec.MainActivity">
+
+    <item
+        android:id="@+id/action_load_wav"
+        android:icon="@mipmap/ic_audiotrack_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_load_all"
+        android:enabled="false"
+        android:icon="@mipmap/ic_file_download_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="ifRoom" />
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/itm_chebyshev_spectrum"
+            android:orderInCategory="100"
+            android:title="@string/chebyshev_spectrum"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/itm_fourer_spectrum"
+            android:orderInCategory="100"
+            android:title="@string/fourer_spectrum"
+            app:showAsAction="never" />
+    </group>
+</menu>

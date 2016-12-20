@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Распознавание речи</string>
+    <string name="action_settings">Settings</string>
+    <string name="fourer_spectrum">Спектр Фурье</string>
+    <string name="chebyshev_spectrum">Спектр Чебышева</string>
+    <string name="str_border">Граница</string>
+    <string name="str_segment">Сегментировать</string>
+    <string name="str_reload">Обновить</string>
+    <string name="str_nothing_to_show">Пока ничего нет</string>
+</resources>
