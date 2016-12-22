@@ -15,8 +15,7 @@ import java.util.List;
 public class WavModelServiceImpl implements WavModelService {
     private int USELESS_BYTE_COUNT = 43;
     private int[] BAND_SPECTRAL_DECOMPOSITION = {0, 2, 4, 6, 8, 10, 15, 25, 50, 128};
-    private int[] BAND_SPECTRAL_DECOMPOSITION_Chebyshev = {0, 4, 8, 12, 16, 20, 30, 50, 100, 256};
-    private double min = 0;
+    private int[] BAND_SPECTRAL_DECOMPOSITION_CHEBYSHEV = {0, 4, 8, 12, 16, 20, 30, 50, 100, 256};
 
     @Override
     public List<Float> load(String filePath) throws IOException {
@@ -34,40 +33,11 @@ public class WavModelServiceImpl implements WavModelService {
         byte[] audioBytes = out.toByteArray();
         int len = audioBytes.length;
 
-        for (int i = USELESS_BYTE_COUNT; i < len-1; i += 2) {
+        for (int i = USELESS_BYTE_COUNT; i < len - 1; i += 2) {
             wavBytes.add(new BigInteger(new byte[]{audioBytes[i], audioBytes[i + 1]}).floatValue());
         }
 
         return wavBytes;
-    }
-
-    @Override
-    public List<WavModel> loadEtalons() {
-        /*OpenFileDialog dialog = new OpenFileDialog();
-        List<ArrayList<Object>> wavBytesEtalons= new ArrayList<>();*/
-        List<WavModel> etalons = new ArrayList<>();
-        /*int etalonSize =0;
-        List<String> path = new ArrayList<>();
-        for (File f : dialog.getAllFiles()) {
-            wavBytesEtalons.add(new ArrayList<>());
-            etalonSize = wavBytesEtalons.size();
-            try (RandomAccessFile data = new RandomAccessFile(new File(f.getPath()), "r")) {
-                byte[] eight;
-                data.readFully(eight = new byte[USELESS_BYTE_COUNT]);
-                for (long i = 0, len = (data.length() - USELESS_BYTE_COUNT) / 2; i < len; i++) {
-                    data.readFully(eight = new byte[2]);
-                    wavBytesEtalons.get(etalonSize-1).add(new BigInteger(eight).doubleValue());
-                }
-                data.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            etalons.add(new WavModel(wavBytesEtalons.get(etalonSize-1),f.getName()));
-        }*/
-        return etalons;
-
     }
 
     @Override
@@ -120,7 +90,7 @@ public class WavModelServiceImpl implements WavModelService {
                 bandDecomposition = BAND_SPECTRAL_DECOMPOSITION;
 
                 if (wavModel.getSpectrum().get(0).size() > 128) {
-                    bandDecomposition = BAND_SPECTRAL_DECOMPOSITION_Chebyshev;
+                    bandDecomposition = BAND_SPECTRAL_DECOMPOSITION_CHEBYSHEV;
                 }
                 for (int j = bandDecomposition[band]; j < bandDecomposition[band + 1]; j++) {
                     value += wavModel.getSpectrum().get(i).get(j);
@@ -137,16 +107,5 @@ public class WavModelServiceImpl implements WavModelService {
         LowPassFilter lpf = new LowPassFilter(N, fCP);
 
         return lpf.applyLPfilter(band);
-    }
-
-    @Override
-    public List<Float> envelopExtracting(List<Float> wavBayts) {
-        LowPassFilter lpf = new LowPassFilter(0, 0);
-        List<Float> absoluteWavBytes = new ArrayList<>();
-        for (float b : wavBayts) {
-            absoluteWavBytes.add(Math.abs(b));
-        }
-        return lpf.applyLPfilter2(absoluteWavBytes);
-
     }
 }

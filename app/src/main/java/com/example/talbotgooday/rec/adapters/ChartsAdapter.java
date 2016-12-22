@@ -1,4 +1,4 @@
-package com.example.talbotgooday.rec;
+package com.example.talbotgooday.rec.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -12,7 +12,8 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
-import com.example.talbotgooday.rec.data.DataSet;
+import com.example.talbotgooday.rec.R;
+import com.example.talbotgooday.rec.model.ChartsDataModel;
 import com.example.talbotgooday.rec.model.WavModel;
 import com.example.talbotgooday.rec.service.WavModelService;
 import com.example.talbotgooday.rec.service.WavModelServiceImpl;
@@ -28,14 +29,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder> {
-    //private List<List<Entry>> mData;
     private WavModel mDataModel;
 
     private Context mContext;
-
-    /*public ChartsAdapter(List<List<Entry>> mData) {
-        this.mData = mData;
-    }*/
 
     public ChartsAdapter(WavModel mDataModel) {
         this.mDataModel = mDataModel;
@@ -51,10 +47,8 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final DataSet analyser = new DataSet(mDataModel);
-        int chartDataCount = 0;
-
-        chartDataCount = analyser.getDataSpectrum().size();
+        final ChartsDataModel analyser = new ChartsDataModel(mDataModel);
+        int chartDataCount = analyser.getDataSpectrum().size();
 
         switch (position) {
             case 0:
@@ -87,7 +81,7 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
                 break;
         }
 
-        holder.seekBarChart.setMax(chartDataCount);
+        holder.seekBarChart.setMax(chartDataCount - 1);
         holder.seekBarChart.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             private int pos = 0;
 
@@ -176,7 +170,7 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
     private LineDataSet getData(int id, int pos) {
         List<Entry> data = new ArrayList<>();
 
-        DataSet analyser = new DataSet(mDataModel);
+        ChartsDataModel analyser = new ChartsDataModel(mDataModel);
 
         switch (id) {
             case 0:
@@ -209,7 +203,7 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
     }
 
     private LineDataSet getNewLineDataSet(List<Float> data, int pos) {
-        List<Entry> toPointsData = new DataSet(data).getData();
+        List<Entry> toPointsData = new ChartsDataModel(data).getData();
 
         LineDataSet dataSet = new LineDataSet(toPointsData, String.valueOf(pos));
         dataSet.setDrawCircles(false);
@@ -247,7 +241,7 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
         @BindView(R.id.btn_band)
         Button btnBand;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);

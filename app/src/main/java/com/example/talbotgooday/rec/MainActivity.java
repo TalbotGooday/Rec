@@ -1,14 +1,12 @@
 package com.example.talbotgooday.rec;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,10 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.zip.ZipInputStream;
+import com.example.talbotgooday.rec.service.HelperModel;
+import com.example.talbotgooday.rec.service.HelperModelImpl;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int FILE_SELECT_CODE = 1;
     private static final int ARCHIVE_SELECT_CODE = 2;
     private Bundle mBundle = new Bundle();
+    private HelperModel mHelper;
+
+    private GoogleApiClient client;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -45,22 +48,13 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //setFragment();
-                Snackbar.make(view, "СУК", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        mHelper = new HelperModelImpl();
 
-
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -79,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.itm_fourer_spectrum:
                 mBundle.putInt("spectrum", 0);
-                if(!item.isChecked())
+                if (!item.isChecked())
                     item.setChecked(true);
                 break;
 
             case R.id.itm_chebyshev_spectrum:
                 mBundle.putInt("spectrum", 1);
-                if(!item.isChecked())
+                if (!item.isChecked())
                     item.setChecked(true);
                 break;
         }
@@ -108,14 +102,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-        //intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         try {
             startActivityForResult(
                     Intent.createChooser(intent, "Select a File to Upload"),
                     selectCode);
-        } catch (android.content.ActivityNotFoundException ex) {
+        } catch (ActivityNotFoundException ex) {
             // Potentially direct the user to the Market with a Dialog
             Toast.makeText(this, "Please install a File Manager.",
                     Toast.LENGTH_SHORT).show();
@@ -130,39 +123,23 @@ public class MainActivity extends AppCompatActivity {
             case FILE_SELECT_CODE:
                 if (resultCode == RESULT_OK) {
                     Uri uri = data.getData();
-                    try {
-                        String path = getPath(this, uri);
-                        Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+                    String path = getPath(this, uri);
+                    Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
 
-                        //MenuItem item = (MenuItem) findViewById(R.id.action_load_all);
-                        setFragment(path);
+                    mBundle.putString("wavPath", path);
+                    setFragment(0);
 
-                        /*if (!item.isEnabled())
-                            item.setEnabled(true);*/
-                    } catch (URISyntaxException e) {
-                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
                 }
                 break;
 
             case ARCHIVE_SELECT_CODE:
                 Uri uri = data.getData();
-                String Fpath = null;
-                try {
-                    Fpath = getPath(this, uri);
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-                int i = -1;
-                try {
-                    if (Fpath != null)
-                        i = readZip(Fpath);
-                    Toast.makeText(this, String.valueOf(i), Toast.LENGTH_SHORT).show();
+                String path = getPath(this, uri);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                }
+                mBundle.putString("fileList", path);
+
+                setFragment(1);
+
                 break;
 
             case RESULT_CANCELED:
@@ -170,10 +147,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static String getPath(Context context, Uri uri) throws URISyntaxException {
+    public static String getPath(Context context, Uri uri) {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             String[] projection = {"_data"};
-            Cursor cursor = null;
+            Cursor cursor;
 
             try {
                 cursor = context.getContentResolver().query(uri, projection, null, null, null);
@@ -184,9 +161,13 @@ public class MainActivity extends AppCompatActivity {
                 if (cursor != null && cursor.moveToFirst()) {
                     return cursor.getString(column_index);
                 }
-            } catch (Exception e) {
-                // Eat it
+
+                if (cursor != null) {
+                    cursor.close();
+                }
+            } catch (Exception ignored) {
             }
+
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
         }
@@ -194,33 +175,41 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private int readZip(String zipName) throws IOException {
-        int counter = 0;
-        ZipInputStream zin = new ZipInputStream(new FileInputStream(zipName));
-        //ZipEntry entry;
-        while (zin.getNextEntry() != null) {
-            //анализ entry
-            //считывание содежимого
-            counter++;
-            zin.closeEntry();
-        }
-        zin.close();
 
-        return counter;
-    }
+    private void setFragment(int index) {
+        Fragment fragment = new ChartsFragment();
+        if (index != 0) fragment = new WavChooseFragment();
 
-    private void setFragment(String wavPath) {
         mEmptyContentText.setVisibility(View.INVISIBLE);
 
-        mBundle.putString("wavPath", wavPath);
+        mHelper.swapFragment(getSupportFragmentManager(), fragment, mBundle);
+    }
 
-        Fragment fragment = new ChartsFragment();
-        fragment.setArguments(mBundle);
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_main, fragment)
-                .commit();
+    @Override
+    public void onStart() {
+        super.onStart();
 
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 }

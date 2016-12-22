@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DTW {
-    private List<List<Double>> seq1;
-    private List<List<Double>> seq2;
+    private List<List<Float>> seq1;
+    private List<List<Float>> seq2;
     private int[][] warpingPath;
 
     private int n;
@@ -14,9 +14,9 @@ public class DTW {
     private int vectorSize;
     private double warpingDistance;
 
-    public DTW(List<List<Double>> sample, List<List<Double>> templete) {
+    public DTW(List<List<Float>> sample, List<List<Float>> template) {
         seq1 = sample;
-        seq2 = templete;
+        seq2 = template;
 
         n = seq1.get(0).size();
         m = seq2.get(0).size();
@@ -29,8 +29,8 @@ public class DTW {
         this.compute();
     }
 
-    public void compute() {
-        double accumulatedDistance = 0.0;
+    private void compute() {
+        double accumulatedDistance;
         List<List<Double>> d = new ArrayList<>();
         //double[][] d = new double[n][m];	// local distances
         double[][] D = new double[n][m];    // global distances
@@ -40,7 +40,7 @@ public class DTW {
             for (int j = 0; j < m; j++) {
                 double dist = 0;
                 for (int k = 0; k < vectorSize; k++) {
-                    dist += Math.pow(seq1.get(k).get(i) - seq2.get(k).get(j), 2);
+                    dist += Math.pow((double) seq1.get(k).get(i) - (double) seq2.get(k).get(j), 2);
                 }
                 d.get(d.size() - 1).add(Math.sqrt(dist));
             }
@@ -59,7 +59,7 @@ public class DTW {
         for (int i = 1; i < n; i++) {
             for (int j = 1; j < m; j++) {
                 accumulatedDistance = Math.min(Math.min(D[i - 1][j], D[i - 1][j - 1]), D[i][j - 1]);
-                accumulatedDistance += d.get(i).get(j);//[i][j];
+                accumulatedDistance += d.get(i - 1).get(j - 1);//[i][j];
                 D[i][j] = accumulatedDistance;
             }
         }
@@ -67,7 +67,7 @@ public class DTW {
 
         int i = n - 1;
         int j = m - 1;
-        int minIndex = 1;
+        int minIndex;
 
         warpingPath[K - 1][0] = i;
         warpingPath[K - 1][1] = j;
@@ -110,6 +110,7 @@ public class DTW {
     public double getDistance() {
         return warpingDistance;
     }
+
 
     private int getIndexOfMinimum(double[] array) {
         int index = 0;

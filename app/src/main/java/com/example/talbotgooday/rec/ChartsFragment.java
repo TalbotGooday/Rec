@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.talbotgooday.rec.adapters.ChartsAdapter;
 import com.example.talbotgooday.rec.model.Chebyshev;
 import com.example.talbotgooday.rec.model.FFT;
 import com.example.talbotgooday.rec.model.WavModel;
@@ -27,7 +28,7 @@ public class ChartsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_charts_holder, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_cards_holder, container, false);
         ButterKnife.bind(this, rootView);
 
         RecyclerView mRecyclerView = ButterKnife.findById(rootView, R.id.rv_charts);
@@ -58,16 +59,14 @@ public class ChartsFragment extends Fragment {
             e.printStackTrace();
         }
 
-        if(wavBytes.size() > 0)
-        {
+        if (wavBytes.size() > 0) {
             WavModel data = new WavModel(new ArrayList<>(wavBytes), fileShortName);
             data.setNoLatentList(service.delLatentPeriod(data));
             data.setNormalizedList(service.normalize(data));
 
-            if(spectrumType == 0){
+            if (spectrumType == 0) {
                 data.setSpectrum(new FFT().fff(data));
-            }
-            else  data.setSpectrum(new Chebyshev().chebyshev(data));
+            } else data.setSpectrum(new Chebyshev().chebyshev(data));
 
             data.setBand(service.spectrumLineView(data));
 

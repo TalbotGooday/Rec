@@ -7,15 +7,14 @@
         android:id="@+id/action_load_wav"
         android:icon="@mipmap/ic_audiotrack_white_24dp"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_load_wav"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_load_all"
-        android:enabled="false"
         android:icon="@mipmap/ic_file_download_white_24dp"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_load_archive"
         app:showAsAction="ifRoom" />
 
     <group android:checkableBehavior="single">
@@ -23,6 +22,7 @@
             android:id="@+id/itm_chebyshev_spectrum"
             android:orderInCategory="100"
             android:title="@string/chebyshev_spectrum"
+            android:checked="true"
             app:showAsAction="never" />
 
         <item

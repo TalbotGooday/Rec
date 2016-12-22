@@ -5,4 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="size_text_main_content">30sp</dimen>
     <dimen name="card_margin">10dp</dimen>
+    <dimen name="name_card_margin">4dp</dimen>
 </resources>

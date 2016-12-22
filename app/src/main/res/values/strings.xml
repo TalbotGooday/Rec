@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">Распознавание речи</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_load_wav">Загрузить wav-файл</string>
+    <string name="action_load_archive">Загрузить архив wav-файлов</string>
     <string name="fourer_spectrum">Спектр Фурье</string>
     <string name="chebyshev_spectrum">Спектр Чебышева</string>
     <string name="str_border">Граница</string>
     <string name="str_segment">Сегментировать</string>
     <string name="str_reload">Обновить</string>
     <string name="str_nothing_to_show">Пока ничего нет</string>
+    <string name="message_text">Выберите файл</string>
+    <string name="recognise">Распознавание</string>
+    <string name="ok_button">Ясненько</string>
+    <string name="str_n">N</string>
+    <string name="str_fcp">FCP</string>
 </resources>
