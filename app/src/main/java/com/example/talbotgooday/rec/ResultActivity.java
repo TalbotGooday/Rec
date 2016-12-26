@@ -123,7 +123,7 @@ public class ResultActivity extends AppCompatActivity {
 
             try {
                 HelperModel presenter = new HelperModelImpl();
-                String zipPath = getIntent().getExtras().getString("archivePath");
+                String zipPath = getIntent().getExtras().getString("fileListPath");
                 mModels = presenter.getZipFileBytesData(zipPath);
 
                 mSpectrumType = bundle.getInt("spectrum");

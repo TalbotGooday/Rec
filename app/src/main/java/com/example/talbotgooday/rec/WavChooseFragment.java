@@ -34,13 +34,13 @@ public class WavChooseFragment extends Fragment {
         ));
 
         Bundle bundle = getArguments();
-        String path = bundle.getString("fileList");
+        String path = bundle.getString("fileListPath");
 
         HelperModel helper = new HelperModelImpl();
 
         ArrayList<String> data = helper.getZipFilesNames(path);
 
-        ItemsAdapter adapter = new ItemsAdapter(data, path);
+        ItemsAdapter adapter = new ItemsAdapter(data, bundle);
         mRecyclerView.setAdapter(adapter);
         return rootView;
     }

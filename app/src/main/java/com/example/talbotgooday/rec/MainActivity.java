@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         mHelper = new HelperModelImpl();
 
+        mBundle.putInt("spectrum", 0);
+
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri uri = data.getData();
                 String path = getPath(this, uri);
 
-                mBundle.putString("fileList", path);
+                mBundle.putString("fileListPath", path);
 
                 setFragment(1);
 
@@ -177,8 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void setFragment(int index) {
-        Fragment fragment = new ChartsFragment();
-        if (index != 0) fragment = new WavChooseFragment();
+        Fragment fragment = index == 0 ? new ChartsFragment() : new WavChooseFragment();
 
         mEmptyContentText.setVisibility(View.INVISIBLE);
 

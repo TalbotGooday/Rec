@@ -94,6 +94,7 @@ public class DTW {
             warpingPath[K - 1][0] = i;
             warpingPath[K - 1][1] = j;
         } // end while
+
         warpingDistance = accumulatedDistance / K;
 
         this.reversePath(warpingPath);

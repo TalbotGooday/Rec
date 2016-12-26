@@ -21,11 +21,11 @@ import butterknife.ButterKnife;
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
     private Context mContext;
     private List<String> mData;
-    private String mPath;
+    private Bundle mBundle;
 
-    public ItemsAdapter(List<String> mData, String path) {
+    public ItemsAdapter(List<String> mData, Bundle mBundle) {
         this.mData = mData;
-        this.mPath = path;
+        this.mBundle = mBundle;
     }
 
     @Override
@@ -43,10 +43,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ResultActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt("itemPos", holder.getAdapterPosition());
-                bundle.putString("archivePath", mPath);
-                intent.putExtras(bundle);
+                mBundle.putInt("itemPos", holder.getAdapterPosition());
+                intent.putExtras(mBundle);
 
                 mContext.startActivity(intent);
             }

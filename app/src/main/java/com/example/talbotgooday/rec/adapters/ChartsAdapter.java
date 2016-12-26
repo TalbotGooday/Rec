@@ -18,12 +18,14 @@ import com.example.talbotgooday.rec.model.WavModel;
 import com.example.talbotgooday.rec.service.WavModelService;
 import com.example.talbotgooday.rec.service.WavModelServiceImpl;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -162,8 +164,13 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
 
         LineData lineData = new LineData(getData(position, 0));
 
-        holder.chart.setData(lineData);
+        Description description = new Description();
+        description.setText(String.format(Locale.getDefault(), "Количество элементов: %d",
+                lineData.getEntryCount() + 1));
 
+
+        holder.chart.setData(lineData);
+        holder.chart.setDescription(description);
         holder.chart.invalidate();
     }
 
@@ -209,7 +216,6 @@ public class ChartsAdapter extends RecyclerView.Adapter<ChartsAdapter.ViewHolder
         dataSet.setDrawCircles(false);
         dataSet.setLabel(String.valueOf(pos));
         dataSet.setColor(Color.YELLOW);
-
         return dataSet;
 
     }

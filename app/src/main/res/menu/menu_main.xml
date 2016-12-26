@@ -19,16 +19,16 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/itm_chebyshev_spectrum"
+            android:id="@+id/itm_fourer_spectrum"
             android:orderInCategory="100"
-            android:title="@string/chebyshev_spectrum"
+            android:title="@string/fourer_spectrum"
             android:checked="true"
             app:showAsAction="never" />
 
         <item
-            android:id="@+id/itm_fourer_spectrum"
+            android:id="@+id/itm_chebyshev_spectrum"
             android:orderInCategory="100"
-            android:title="@string/fourer_spectrum"
+            android:title="@string/chebyshev_spectrum"
             app:showAsAction="never" />
     </group>
 </menu>

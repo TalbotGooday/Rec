@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.07"
                 android:ems="10"
-                android:inputType="numberDecimal|numberPassword" />
+                android:inputType="numberDecimal|numberSigned" />
 
             <Button
                 android:id="@+id/btn_band"
