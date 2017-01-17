@@ -72,11 +72,6 @@ public class WavModel {
         this.spectrum = spectrum;
     }
 
-    public void setWavBytes(List<Float> wavBytes) {
-
-        this.wavBytes = wavBytes;
-    }
-
     public WavModel() {
         this.wavBytes = null;
     }

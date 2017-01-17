@@ -4,27 +4,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DTW {
-    private List<List<Float>> seq1;
-    private List<List<Float>> seq2;
-    private int[][] warpingPath;
+    private List<List<Float>> mSample;
+    private List<List<Float>> mTemplate;
+    private int[][] mWarpingPath;
 
-    private int n;
-    private int m;
-    private int K;
-    private int vectorSize;
-    private double warpingDistance;
+    private int mMatrixN;
+    private int mMatrixM;
+    private int mStepsCount;
+    private int mVectorSize;
+    private double mVarpingDistance;
 
     public DTW(List<List<Float>> sample, List<List<Float>> template) {
-        seq1 = sample;
-        seq2 = template;
+        this.mSample = sample;
+        this.mTemplate = template;
 
-        n = seq1.get(0).size();
-        m = seq2.get(0).size();
-        vectorSize = seq1.size();
-        K = 1;
+        mMatrixN = mSample.get(0).size();
+        mMatrixM = mTemplate.get(0).size();
+        mVectorSize = mSample.size();
+        mStepsCount = 1;
 
-        warpingPath = new int[n + m][2];    // max(n, m) <= K < n + m
-        warpingDistance = 0.0;
+        mWarpingPath = new int[mMatrixN + mMatrixM][2];    // max(mMatrixN, mMatrixM) <= mStepsCount < mMatrixN + mMatrixM
+        mVarpingDistance = 0.0;
 
         this.compute();
     }
@@ -32,45 +32,47 @@ public class DTW {
     private void compute() {
         double accumulatedDistance;
         List<List<Double>> d = new ArrayList<>();
-        //double[][] d = new double[n][m];	// local distances
-        double[][] D = new double[n][m];    // global distances
+        //double[][] d = new double[mMatrixN][mMatrixM];	// local distances
+        double[][] D = new double[mMatrixN][mMatrixM];    // global distances
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < mMatrixN; i++) {
             d.add(new ArrayList<Double>());
-            for (int j = 0; j < m; j++) {
+            for (int j = 0; j < mMatrixM; j++) {
                 double dist = 0;
-                for (int k = 0; k < vectorSize; k++) {
-                    dist += Math.pow((double) seq1.get(k).get(i) - (double) seq2.get(k).get(j), 2);
+                for (int k = 0; k < mVectorSize; k++) {
+                    dist += Math.pow((double) mSample.get(k).get(i) - (double) mTemplate.get(k).get(j), 2);
                 }
+
                 d.get(d.size() - 1).add(Math.sqrt(dist));
             }
         }
 
         D[0][0] = d.get(0).get(0);
 
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i < mMatrixN; i++) {
             D[i][0] = d.get(i).get(0) + D[i - 1][0];
         }
 
-        for (int j = 1; j < m; j++) {
+        for (int j = 1; j < mMatrixM; j++) {
             D[0][j] = d.get(0).get(j) + D[0][j - 1];
         }
 
-        for (int i = 1; i < n; i++) {
-            for (int j = 1; j < m; j++) {
+        for (int i = 1; i < mMatrixN; i++) {
+            for (int j = 1; j < mMatrixM; j++) {
                 accumulatedDistance = Math.min(Math.min(D[i - 1][j], D[i - 1][j - 1]), D[i][j - 1]);
                 accumulatedDistance += d.get(i - 1).get(j - 1);//[i][j];
                 D[i][j] = accumulatedDistance;
             }
         }
-        accumulatedDistance = D[n - 1][m - 1];
 
-        int i = n - 1;
-        int j = m - 1;
+        accumulatedDistance = D[mMatrixN - 1][mMatrixM - 1];
+
+        int i = mMatrixN - 1;
+        int j = mMatrixM - 1;
         int minIndex;
 
-        warpingPath[K - 1][0] = i;
-        warpingPath[K - 1][1] = j;
+        mWarpingPath[mStepsCount - 1][0] = i;
+        mWarpingPath[mStepsCount - 1][1] = j;
 
         while ((i + j) != 0) {
             if (i == 0) {
@@ -90,26 +92,27 @@ public class DTW {
                     j -= 1;
                 }
             } // end else
-            K++;
-            warpingPath[K - 1][0] = i;
-            warpingPath[K - 1][1] = j;
+            mStepsCount++;
+            mWarpingPath[mStepsCount - 1][0] = i;
+            mWarpingPath[mStepsCount - 1][1] = j;
         } // end while
 
-        warpingDistance = accumulatedDistance / K;
+        mVarpingDistance = accumulatedDistance / mStepsCount;
 
-        this.reversePath(warpingPath);
+        mWarpingPath = this.reversePath(mWarpingPath);
     }
 
-    private void reversePath(int[][] path) {
-        int[][] newPath = new int[K][2];
-        for (int i = 0; i < K; i++) {
-            System.arraycopy(path[K - i - 1], 0, newPath[i], 0, 2);
+    private int[][] reversePath(int[][] path) {
+        int[][] newPath = new int[mStepsCount][2];
+        for (int i = 0; i < mStepsCount; i++) {
+            System.arraycopy(path[mStepsCount - i - 1], 0, newPath[i], 0, 2);
         }
-        warpingPath = newPath;
+
+        return newPath;
     }
 
     public double getDistance() {
-        return warpingDistance;
+        return mVarpingDistance;
     }
 
 
@@ -125,16 +128,4 @@ public class DTW {
         }
         return index;
     }
-
-    public String toString() {
-        String retVal = "Warping Distance: " + warpingDistance + "\n";
-        retVal += "Warping Path: {";
-        for (int i = 0; i < K; i++) {
-            retVal += "(" + warpingPath[i][0] + ", " + warpingPath[i][1] + ")";
-            retVal += (i == K - 1) ? "}" : ", ";
-
-        }
-        return retVal;
-    }
-
 }

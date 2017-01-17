@@ -13,7 +13,6 @@ import java.util.List;
 
 
 public class WavModelServiceImpl implements WavModelService {
-    private int USELESS_BYTE_COUNT = 43;
     private int[] BAND_SPECTRAL_DECOMPOSITION = {0, 2, 4, 6, 8, 10, 15, 25, 50, 128};
     private int[] BAND_SPECTRAL_DECOMPOSITION_CHEBYSHEV = {0, 4, 8, 12, 16, 20, 30, 50, 100, 256};
 
@@ -33,6 +32,7 @@ public class WavModelServiceImpl implements WavModelService {
         byte[] audioBytes = out.toByteArray();
         int len = audioBytes.length;
 
+        int USELESS_BYTE_COUNT = 43;
         for (int i = USELESS_BYTE_COUNT; i < len - 1; i += 2) {
             wavBytes.add(new BigInteger(new byte[]{audioBytes[i], audioBytes[i + 1]}).floatValue());
         }
@@ -68,10 +68,10 @@ public class WavModelServiceImpl implements WavModelService {
     @Override
     public List<Float> normalize(WavModel wavModel) {
         List<Float> bytes = new ArrayList<>(wavModel.getNoLatentList());
-        float disp = MathHelper.dispersion(bytes);
+        float dispersion = MathHelper.dispersion(bytes);
         for (int i = 0; i < bytes.size(); i++) {
             float value = bytes.get(i);
-            bytes.set(i, (value / (disp)));
+            bytes.set(i, (value / (dispersion)));
         }
         return bytes;
     }
@@ -106,6 +106,6 @@ public class WavModelServiceImpl implements WavModelService {
     public List<Float> getLowPassFilterData(List<Float> band, int N, double fCP) {
         LowPassFilter lpf = new LowPassFilter(N, fCP);
 
-        return lpf.applyLPfilter(band);
+        return lpf.applyLPFilter(band);
     }
 }

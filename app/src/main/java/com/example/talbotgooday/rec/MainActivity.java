@@ -17,10 +17,6 @@ import android.widget.Toast;
 
 import com.example.talbotgooday.rec.service.HelperModel;
 import com.example.talbotgooday.rec.service.HelperModelImpl;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,8 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int ARCHIVE_SELECT_CODE = 2;
     private Bundle mBundle = new Bundle();
     private HelperModel mHelper;
-
-    private GoogleApiClient client;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -51,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         mHelper = new HelperModelImpl();
 
         mBundle.putInt("spectrum", 0);
-
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -86,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -95,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
         switch (selectCode) {
             case FILE_SELECT_CODE:
-                //intent.setType("audio/wav");
                 intent.setType("audio/*");
                 break;
 
@@ -111,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     Intent.createChooser(intent, "Select a File to Upload"),
                     selectCode);
         } catch (ActivityNotFoundException ex) {
-            // Potentially direct the user to the Market with a Dialog
+
             Toast.makeText(this, "Please install a File Manager.",
                     Toast.LENGTH_SHORT).show();
         }
@@ -184,33 +174,5 @@ public class MainActivity extends AppCompatActivity {
         mEmptyContentText.setVisibility(View.INVISIBLE);
 
         mHelper.swapFragment(getSupportFragmentManager(), fragment, mBundle);
-    }
-
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("Main Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 }

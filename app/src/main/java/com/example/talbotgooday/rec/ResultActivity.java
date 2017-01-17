@@ -34,6 +34,11 @@ public class ResultActivity extends AppCompatActivity {
     @BindView(R.id.rv_charts)
     RecyclerView mRecyclerView;
 
+    private static final String SPECTRUM = "spectrum";
+    private static final String POSITION = "itemPos";
+    private static final String PATH = "fileListPath";
+    private static final String DIALOG = "dialog";
+
     private List<WavModel> mModels = new ArrayList<>();
     private int mChosenPos = -1;
     private int mSpectrumType;
@@ -123,11 +128,11 @@ public class ResultActivity extends AppCompatActivity {
 
             try {
                 HelperModel presenter = new HelperModelImpl();
-                String zipPath = getIntent().getExtras().getString("fileListPath");
+                String zipPath = getIntent().getExtras().getString(PATH);
                 mModels = presenter.getZipFileBytesData(zipPath);
 
-                mSpectrumType = bundle.getInt("spectrum");
-                mChosenPos = bundle.getInt("itemPos");
+                mSpectrumType = bundle.getInt(SPECTRUM);
+                mChosenPos = bundle.getInt(POSITION);
 
 
                 WavModelService service = new WavModelServiceImpl();
@@ -140,7 +145,7 @@ public class ResultActivity extends AppCompatActivity {
 
                     if (mSpectrumType == 0) {
                         data.setSpectrum(new FFT().fff(data));
-                    } else data.setSpectrum(new Chebyshev().chebyshev(data));
+                    } else data.setSpectrum(new Chebyshev().getChebyshevResult(data));
 
                     data.setBand(service.spectrumLineView(data));
 
@@ -179,7 +184,7 @@ public class ResultActivity extends AppCompatActivity {
             super.onPreExecute();
 
             pd = new ProgressDialog(context);
-            pd.setMessage("Подождите немного");
+            pd.setMessage(getResources().getString(R.string.txt_wait));
             pd.show();
         }
 
@@ -198,7 +203,7 @@ public class ResultActivity extends AppCompatActivity {
 
                         if (mSpectrumType == 0) {
                             data.setSpectrum(new FFT().fff(data));
-                        } else data.setSpectrum(new Chebyshev().chebyshev(data));
+                        } else data.setSpectrum(new Chebyshev().getChebyshevResult(data));
 
                         data.setBand(service.spectrumLineView(data));
 
@@ -225,11 +230,16 @@ public class ResultActivity extends AppCompatActivity {
     private void showResultDialog(List<ResultModel> result) {
         RecogniseResultDialog dialog;
         dialog = RecogniseResultDialog.newInstance(result);
+        String spectrumName = mSpectrumType == 0 ?
+                getResources().getString(R.string.fourer_spectrum)
+                :
+                getResources().getString(R.string.chebyshev_spectrum);
 
+        dialog.setTitle(String.format("%s: %s", mModels.get(mChosenPos).getFileName(), spectrumName));
         FragmentManager manager = getSupportFragmentManager();
 
         FragmentTransaction transaction = manager.beginTransaction();
 
-        dialog.show(transaction, "dialog");
+        dialog.show(transaction, DIALOG);
     }
 }

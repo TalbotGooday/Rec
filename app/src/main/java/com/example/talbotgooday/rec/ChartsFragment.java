@@ -66,7 +66,7 @@ public class ChartsFragment extends Fragment {
 
             if (spectrumType == 0) {
                 data.setSpectrum(new FFT().fff(data));
-            } else data.setSpectrum(new Chebyshev().chebyshev(data));
+            } else data.setSpectrum(new Chebyshev().getChebyshevResult(data));
 
             data.setBand(service.spectrumLineView(data));
 

@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 
 public class RecogniseResultDialog extends DialogFragment {
     private static final String ITEMS = "items";
+    private String mTitle;
 
     public static RecogniseResultDialog newInstance(List<ResultModel> items) {
         RecogniseResultDialog resultDialog = new
@@ -33,6 +34,10 @@ public class RecogniseResultDialog extends DialogFragment {
         resultDialog.setArguments(args);
 
         return resultDialog;
+    }
+
+    public void setTitle(String title){
+        this.mTitle = title;
     }
 
     @NonNull
@@ -54,7 +59,8 @@ public class RecogniseResultDialog extends DialogFragment {
             }
         });
 
-        String strTitle = context.getString(R.string.app_name);
+        String strTitle = mTitle == null? context.getString(R.string.app_name) : mTitle;
+
         builder.setTitle(strTitle);
 
         List<ResultModel> data = (List)getArguments().getSerializable(ITEMS);

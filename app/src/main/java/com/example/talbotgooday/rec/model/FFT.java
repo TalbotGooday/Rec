@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FFT {
-    private int N = 256;
-    private int cSize = 128;
-    private float PI = (float)Math.PI;
+    private final int N = 256;
+    private final float PI = (float)Math.PI;
 
     private float a(List<Float> s, int k, int step) {
         float a = 0;
-        int j = 1;
-        //int N=s.size();
+
         for (int i = step * N; i < (step + 1) * N; i++) {
             a += s.get(i) * Math.cos((2 * PI * k * i) / N);
         }
@@ -35,10 +33,11 @@ public class FFT {
 
     public List<List<Float>> fff(WavModel wavModel) {
         List<Float> s = wavModel.getNormalizedList();
-        int spectrCount = s.size() / N;
+        int spectrumCount = s.size() / N;
         List<List<Float>> ck = new ArrayList<>();
-        for (int i = 0; i < spectrCount; i++) {
+        for (int i = 0; i < spectrumCount; i++) {
             ck.add(new ArrayList<Float>());
+            int cSize = 128;
             for (int j = 0; j < cSize; j++)
                 ck.get(i).add(c(s, j, i));
         }
