@@ -1,17 +1,23 @@
 package com.example.talbotgooday.rec;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,12 +33,16 @@ public class MainActivity extends AppCompatActivity {
     private static final int ARCHIVE_SELECT_CODE = 2;
     private Bundle mBundle = new Bundle();
     private HelperModel mHelper;
+    private boolean mPermissions = false;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @BindView(R.id.txt_empty_content)
     TextView mEmptyContentText;
+
+    @BindView(R.id.content_main)
+    FrameLayout mContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +55,31 @@ public class MainActivity extends AppCompatActivity {
         mHelper = new HelperModelImpl();
 
         mBundle.putInt("spectrum", 0);
+
+        requestMultiplePermissions();
+    }
+
+    public void requestMultiplePermissions() {
+        ActivityCompat.requestPermissions(this,
+                new String[]{
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                },
+                FILE_SELECT_CODE);
+    }
+
+    public void checkForPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Snackbar.make(mContent, getString(R.string.err_permissions_denied), Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.err_button_perm_den), new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            requestMultiplePermissions();
+                        }
+                    })
+                    .show();
+        }
+        else mPermissions = true;
     }
 
     @Override
@@ -59,10 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_load_wav:
-                showFileChooser(FILE_SELECT_CODE);
+                checkForPermission();
+                if(mPermissions) showFileChooser(FILE_SELECT_CODE);
                 break;
+
             case R.id.action_load_all:
-                showFileChooser(ARCHIVE_SELECT_CODE);
+                checkForPermission();
+                if(mPermissions) showFileChooser(ARCHIVE_SELECT_CODE);
                 break;
 
             case R.id.itm_fourer_spectrum:
@@ -90,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case ARCHIVE_SELECT_CODE:
-                intent.setType("application/zip");
+                intent.setType("application/*");
                 break;
         }
 
@@ -98,11 +136,11 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             startActivityForResult(
-                    Intent.createChooser(intent, "Select a File to Upload"),
+                    Intent.createChooser(intent, getString(R.string.err_file_for_download)),
                     selectCode);
         } catch (ActivityNotFoundException ex) {
 
-            Toast.makeText(this, "Please install a File Manager.",
+            Toast.makeText(this, getString(R.string.err_file_manager),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -125,13 +163,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case ARCHIVE_SELECT_CODE:
-                Uri uri = data.getData();
-                String path = getPath(this, uri);
+                if (resultCode == RESULT_OK) {
+                    Uri uri = data.getData();
+                    String path = getPath(this, uri);
+                    Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
 
-                mBundle.putString("fileListPath", path);
-
-                setFragment(1);
-
+                    mBundle.putString("fileListPath", path);
+                    setFragment(1);
+                }
                 break;
 
             case RESULT_CANCELED:

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.talbotgooday.rec.R;
@@ -39,7 +40,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.text.setText(mData.get(position));
-        holder.text.setOnClickListener(new View.OnClickListener() {
+        holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ResultActivity.class);
@@ -59,6 +60,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
     public class ViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.txt_name)
         TextView text;
+
+        @BindView(R.id.card_item)
+        RelativeLayout card;
 
         ViewHolder(View itemView) {
             super(itemView);

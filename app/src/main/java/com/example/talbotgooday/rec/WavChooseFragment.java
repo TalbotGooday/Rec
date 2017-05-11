@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.talbotgooday.rec.adapters.ItemsAdapter;
 import com.example.talbotgooday.rec.service.HelperModel;
@@ -39,6 +40,9 @@ public class WavChooseFragment extends Fragment {
         HelperModel helper = new HelperModelImpl();
 
         ArrayList<String> data = helper.getZipFilesNames(path);
+
+        if (data.size() == 0)
+            Toast.makeText(getContext(), getContext().getString(R.string.err_file_not_found), Toast.LENGTH_SHORT).show();
 
         ItemsAdapter adapter = new ItemsAdapter(data, bundle);
         mRecyclerView.setAdapter(adapter);

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Распознавание речи</string>
+    <string name="app_name">Распознавание речи (Demo)</string>
     <string name="action_load_wav">Загрузить wav-файл</string>
     <string name="action_load_archive">Загрузить архив wav-файлов</string>
     <string name="fourer_spectrum">Спектр Фурье</string>
@@ -14,4 +14,11 @@
     <string name="str_n">N</string>
     <string name="str_fcp">FCP</string>
     <string name="txt_wait">Подождите немного</string>
+
+    <!-- Ошибки -->
+    <string name="err_file_not_found">Файл почему-то не найден</string>
+    <string name="err_permissions_denied">Дайте, пожалуйста, разрешение на доступ к файлам</string>
+    <string name="err_button_perm_den">Дать</string>
+    <string name="err_file_manager">Пожалуйста, установите файловый менеджер</string>
+    <string name="err_file_for_download">Выберите файл для загрузки</string>
 </resources>
