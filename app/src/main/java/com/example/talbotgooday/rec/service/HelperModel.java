@@ -13,6 +13,8 @@ import java.util.List;
 public interface HelperModel {
     void swapFragment(FragmentManager manager, Fragment fragment, Bundle bundle);
 
+    void deleteFragment(FragmentManager manager, int id);
+
     ArrayList<String> getZipFilesNames(String zipName);
 
     List<WavModel> getZipFileBytesData(String zipName) throws IOException;

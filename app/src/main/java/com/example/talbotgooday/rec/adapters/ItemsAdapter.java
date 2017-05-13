@@ -43,9 +43,6 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent(mContext, ResultActivity.class);
-                mBundle.putInt("itemPos", holder.getAdapterPosition());
-                intent.putExtras(mBundle);*/
 
                 Intent intent = new Intent(mContext, ResultTabbedActivity.class);
                 mBundle.putInt("itemPos", holder.getAdapterPosition());
@@ -62,7 +59,7 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         return mData.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.txt_name)
         TextView text;
 

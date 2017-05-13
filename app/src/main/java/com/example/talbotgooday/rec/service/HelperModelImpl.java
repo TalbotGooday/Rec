@@ -32,6 +32,12 @@ public class HelperModelImpl implements HelperModel {
     }
 
     @Override
+    public void deleteFragment(FragmentManager manager, int id) {
+        manager.beginTransaction().
+                remove(manager.findFragmentById(id)).commit();
+    }
+
+    @Override
     public ArrayList<String> getZipFilesNames(String zipName) {
         ArrayList<String> result = new ArrayList<>();
 

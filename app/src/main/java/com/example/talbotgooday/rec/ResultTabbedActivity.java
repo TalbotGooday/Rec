@@ -459,7 +459,7 @@ public class ResultTabbedActivity extends AppCompatActivity {
                 mChosenWavIndex = bundle.getInt(POSITION);
                 WavModelService service = new WavModelServiceImpl();
 
-                if (mChosenWavIndex != -1) {
+                if (mChosenWavIndex != -1 || mWavModels.size() > 0) {
                     mWavModels = presenter.getZipFileBytesData(path);
                     data = mWavModels.get(mChosenWavIndex);
                 } else {

@@ -177,6 +177,9 @@ public class MainActivity extends AppCompatActivity
                     mBundle.putInt("itemPos", -1);
                     mBundle.putBoolean("isMenuEnabled", false);
 
+                    mHelper.deleteFragment(getSupportFragmentManager(), R.id.content_main);
+                    mEmptyContentText.setVisibility(View.VISIBLE);
+
                     intent.putExtras(mBundle);
                     startActivity(intent);
 
