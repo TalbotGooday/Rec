@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.talbotgooday.rec.R;
-import com.example.talbotgooday.rec.ResultActivity;
+import com.example.talbotgooday.rec.ResultTabbedActivity;
 
 import java.util.List;
 
@@ -43,10 +43,15 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         holder.card.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ResultActivity.class);
+                /*Intent intent = new Intent(mContext, ResultActivity.class);
                 mBundle.putInt("itemPos", holder.getAdapterPosition());
-                intent.putExtras(mBundle);
+                intent.putExtras(mBundle);*/
 
+                Intent intent = new Intent(mContext, ResultTabbedActivity.class);
+                mBundle.putInt("itemPos", holder.getAdapterPosition());
+                mBundle.putBoolean("isMenuEnabled", true);
+
+                intent.putExtras(mBundle);
                 mContext.startActivity(intent);
             }
         });

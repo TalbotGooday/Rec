@@ -36,7 +36,7 @@ public class RecogniseResultDialog extends DialogFragment {
         return resultDialog;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         this.mTitle = title;
     }
 
@@ -59,11 +59,11 @@ public class RecogniseResultDialog extends DialogFragment {
             }
         });
 
-        String strTitle = mTitle == null? context.getString(R.string.app_name) : mTitle;
+        String strTitle = mTitle == null ? context.getString(R.string.app_name) : mTitle;
 
         builder.setTitle(strTitle);
 
-        List<ResultModel> data = (List)getArguments().getSerializable(ITEMS);
+        List<ResultModel> data = (List) getArguments().getSerializable(ITEMS);
 
         RecogniseResultAdapter adapter = new RecogniseResultAdapter(data, context);
 

@@ -8,10 +8,14 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -27,7 +31,8 @@ import com.example.talbotgooday.rec.service.HelperModelImpl;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int FILE_SELECT_CODE = 1;
     private static final int ARCHIVE_SELECT_CODE = 2;
@@ -44,10 +49,16 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.content_main)
     FrameLayout mContent;
 
+    @BindView(R.id.drawer)
+    DrawerLayout mDrawer;
+
+    @BindView(R.id.nav_view)
+    NavigationView mNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_drawer);
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -56,10 +67,17 @@ public class MainActivity extends AppCompatActivity {
 
         mBundle.putInt("spectrum", 0);
 
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        mNavigationView.setNavigationItemSelectedListener(this);
+
         requestMultiplePermissions();
     }
 
-    public void requestMultiplePermissions() {
+    private void requestMultiplePermissions() {
         ActivityCompat.requestPermissions(this,
                 new String[]{
                         Manifest.permission.READ_EXTERNAL_STORAGE
@@ -67,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 FILE_SELECT_CODE);
     }
 
-    public void checkForPermission() {
+    private void checkForPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             Snackbar.make(mContent, getString(R.string.err_permissions_denied), Snackbar.LENGTH_LONG)
@@ -78,9 +96,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     })
                     .show();
-        }
-        else mPermissions = true;
+        } else mPermissions = true;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,12 +113,12 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_load_wav:
                 checkForPermission();
-                if(mPermissions) showFileChooser(FILE_SELECT_CODE);
+                if (mPermissions) showFileChooser(FILE_SELECT_CODE);
                 break;
 
             case R.id.action_load_all:
                 checkForPermission();
-                if(mPermissions) showFileChooser(ARCHIVE_SELECT_CODE);
+                if (mPermissions) showFileChooser(ARCHIVE_SELECT_CODE);
                 break;
 
             case R.id.itm_fourer_spectrum:
@@ -140,8 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     selectCode);
         } catch (ActivityNotFoundException ex) {
 
-            Toast.makeText(this, getString(R.string.err_file_manager),
-                    Toast.LENGTH_SHORT).show();
+            showToast(getString(R.string.err_file_manager));
         }
     }
 
@@ -154,10 +171,14 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Uri uri = data.getData();
                     String path = getPath(this, uri);
-                    Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+                    showToast(path);
+                    Intent intent = new Intent(this, ResultTabbedActivity.class);
+                    mBundle.putString("fileListPath", path);
+                    mBundle.putInt("itemPos", -1);
+                    mBundle.putBoolean("isMenuEnabled", false);
 
-                    mBundle.putString("wavPath", path);
-                    setFragment(0);
+                    intent.putExtras(mBundle);
+                    startActivity(intent);
 
                 }
                 break;
@@ -166,10 +187,10 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
                     Uri uri = data.getData();
                     String path = getPath(this, uri);
-                    Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+                    showToast(path);
 
                     mBundle.putString("fileListPath", path);
-                    setFragment(1);
+                    setFragment();
                 }
                 break;
 
@@ -178,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static String getPath(Context context, Uri uri) {
+    private static String getPath(Context context, Uri uri) {
         if ("content".equalsIgnoreCase(uri.getScheme())) {
             String[] projection = {"_data"};
             Cursor cursor;
@@ -207,11 +228,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setFragment(int index) {
-        Fragment fragment = index == 0 ? new ChartsFragment() : new WavChooseFragment();
+    private void setFragment() {
+        Fragment fragment = new WavChooseFragment();
 
         mEmptyContentText.setVisibility(View.INVISIBLE);
 
         mHelper.swapFragment(getSupportFragmentManager(), fragment, mBundle);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_load_wav_nav:
+                checkForPermission();
+                if (mPermissions) showFileChooser(FILE_SELECT_CODE);
+                break;
+
+            case R.id.action_load_all_nav:
+                checkForPermission();
+                if (mPermissions) showFileChooser(ARCHIVE_SELECT_CODE);
+                break;
+
+            case R.id.action_load_one_example:
+                openWebURL(getString(R.string.example_wav_url));
+                break;
+
+            case R.id.action_load_zip_example:
+                openWebURL(getString(R.string.example_zip_url));
+                break;
+
+            case R.id.action_to_store:
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("market://details?id=com.gooday.talbotgooday.rec"));
+                startActivity(intent);
+                break;
+
+            case R.id.action_to_github:
+                openWebURL(getString(R.string.github_url));
+                break;
+        }
+
+        mDrawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void openWebURL(String inURL) {
+        Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(inURL));
+
+        startActivity(browse);
+    }
+
+    private void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
     }
 }

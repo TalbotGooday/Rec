@@ -1,0 +1,57 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.talbotgooday.rec.MainActivity">
+
+    <group android:checkableBehavior="single"
+        android:id="@+id/loading_files">
+        <item
+            android:id="@+id/action_load_wav_nav"
+            android:icon="@mipmap/ic_audiotrack_white_24dp"
+            android:orderInCategory="100"
+            android:title="@string/action_load_wav"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/action_load_all_nav"
+            android:icon="@mipmap/ic_file_download_white_24dp"
+            android:orderInCategory="100"
+            android:title="@string/action_load_archive"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <group android:checkableBehavior="none"
+        android:id="@+id/action_loading_examples">
+        <item
+            android:id="@+id/action_load_one_example"
+            android:icon="@mipmap/ic_cloud_download_black_24dp"
+            android:orderInCategory="100"
+            android:title="@string/action_load_one_example"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/action_load_zip_example"
+            android:icon="@mipmap/ic_cloud_download_black_24dp"
+            android:orderInCategory="100"
+            android:title="@string/action_load_zip_example"
+            app:showAsAction="ifRoom" />
+    </group>
+
+    <group android:checkableBehavior="none"
+        android:id="@+id/credits">
+        <item
+            android:id="@+id/action_to_store"
+            android:icon="@mipmap/ic_star_rate_black_18dp"
+            android:orderInCategory="100"
+            android:title="@string/action_to_store"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/action_to_github"
+            android:icon="@mipmap/ic_github"
+            android:orderInCategory="100"
+            android:title="@string/action_to_github"
+            app:showAsAction="ifRoom" />
+    </group>
+
+</menu>
