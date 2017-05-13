@@ -16,6 +16,7 @@
     <string name="str_n">N</string>
     <string name="str_fcp">FCP</string>
     <string name="txt_wait">Подождите немного</string>
+    <string name="wait_please">Подождите немного</string>
 
     <!-- Ошибки -->
     <string name="err_file_not_found">Файл почему-то не найден</string>
@@ -32,8 +33,4 @@
     <string name="github_url">https://github.com/TalbotGooday/Rec</string>
     <string name="navigation_drawer_open">Drawer open</string>
     <string name="navigation_drawer_close">Drawer close</string>
-    <string name="title_activity_result_tabbed">ResultTabbedActivity</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="wait_please">Подождите немного</string>
 </resources>
